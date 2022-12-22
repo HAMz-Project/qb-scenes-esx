@@ -1,7 +1,6 @@
 -----------------------
 ----   Variables   ----
 -----------------------
-local QBCore = exports['qb-core']:GetCoreObject()
 local scenes = {}
 
 -----------------------
@@ -20,8 +19,8 @@ end)
 ---- Server Events ----
 -----------------------
 
-QBCore.Functions.CreateCallback('qb-scenes:server:GetScenes', function(_, cb)
-    cb(scenes)
+lib.callback.register('qb-scenes:server:GetScenes', function(_)
+    return scenes
 end)
 
 -----------------------
@@ -67,12 +66,12 @@ end)
 
 RegisterNetEvent('qb-scenes:server:CreateScene', function(sceneData)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = ESX.GetPlayerFromId(src)
 
-    TriggerEvent("qb-log:server:CreateLog", "scenes", "New Scene Created", "red", "**".. GetPlayerName(source) .. "** (citizenid: *"..Player.PlayerData.citizenid.."* | id: *"..source.."*) created a new scene; scene: **"..sceneData.text.."**, where: **" .. sceneData.coords .. "**")
+    --TriggerEvent("qb-log:server:CreateLog", "scenes", "New Scene Created", "red", "**".. GetPlayerName(source) .. "** (citizenid: *"..Player.identifier.."* | id: *"..source.."*) created a new scene; scene: **"..sceneData.text.."**, where: **" .. sceneData.coords .. "**")
 
     MySQL.Async.insert('INSERT INTO scenes (creator, text, color, viewdistance, expiration, fontsize, fontstyle, coords, date_creation, date_deletion) VALUES (? ,?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL ? HOUR))', {
-        Player.PlayerData.citizenid,
+        Player.identifier,
         sceneData.text,
         sceneData.color,
         sceneData.viewdistance,

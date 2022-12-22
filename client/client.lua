@@ -1,8 +1,6 @@
 -----------------------
 ----   Variables   ----
 -----------------------
-local QBCore = exports['qb-core']:GetCoreObject()
-
 local scenes = {}
 local closestScenes = {}
 
@@ -18,7 +16,7 @@ CreateThread(function()
         closestScenes = {}
         for i=1, #scenes do
             local currentScene = scenes[i]
-            local plyPosition = GetEntityCoords(PlayerPedId())
+            local plyPosition = GetEntityCoords(cache.ped)
             local distance = #(plyPosition - currentScene.coords)
             if distance < Config.MaxPlacementDistance then
                 closestScenes[#closestScenes+1] = currentScene
@@ -35,7 +33,7 @@ CreateThread(function()
             wait = 0
             for i=1, #closestScenes do
                 local currentScene = closestScenes[i]
-                local plyPosition = GetEntityCoords(PlayerPedId())
+                local plyPosition = GetEntityCoords(cache.ped)
                 local distance = #(plyPosition - currentScene.coords)
                 if distance <= currentScene.viewdistance then
                     DrawScene(closestScenes[i])
@@ -86,7 +84,7 @@ RegisterNetEvent('qb-scenes:client:UpdateAllScenes', function(list)
     scenes = list
 end)
 
-RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
+RegisterNetEvent("esx:playerLoaded", function()
     GetScenes()
 end)
 
@@ -101,7 +99,7 @@ end)
 -----------------------
 
 function GetScenes()
-    QBCore.Functions.TriggerCallback('qb-scenes:server:GetScenes', function(list)
+    lib.callback('qb-scenes:server:GetScenes', false, function(list)
         scenes = list
     end)
 end
@@ -132,7 +130,7 @@ function ToggleCreationLaser(data)
                     if hit then
                         TriggerServerEvent('qb-scenes:server:CreateScene', data)
                     else
-                        QBCore.Functions.Notify(Lang:t("notify.laser_error"), "error")
+                        ESX.ShowNotification(_U("laser_error"), "error")
                     end
                 elseif IsControlJustReleased(0, 47) then
                     creationLaser = false
@@ -159,7 +157,7 @@ function ToggleDeletionLaser()
                     if hit then
                         DeleteScene(coords)
                     else
-                        QBCore.Functions.Notify(Lang:t("notify.laser_error"), "error")
+                        ESX.ShowNotification(_U("laser_error"), "error")
                     end
                 elseif IsControlJustReleased(0, 47) then
                     deletionLaser = false
@@ -184,10 +182,10 @@ function DeleteScene(coords)
     end
 
     if closestScene then
-        QBCore.Functions.Notify(Lang:t("notify.scene_delete"), "success")
+        ESX.ShowNotification(_U("scene_delete"), "success")
         TriggerServerEvent('qb-scenes:server:DeleteScene', closestScene)
     else
-        QBCore.Functions.Notify(Lang:t("notify.scene_error"), "error")
+        ESX.ShowNotification(_U("scene_error"), "error")
     end
 end
 
@@ -196,7 +194,7 @@ function DrawLaser(message, color)
     Draw2DText(message, 4, {255, 255, 255}, 0.4, 0.43, 0.888 + 0.025)
 
     if hit then
-        local position = GetEntityCoords(PlayerPedId())
+        local position = GetEntityCoords(cache.ped)
         DrawLine(position.x, position.y, position.z, coords.x, coords.y, coords.z, color.r, color.g, color.b, color.a)
         DrawMarker(28, coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 0.0, 180.0, 0.0, 0.1, 0.1, 0.1, color.r, color.g, color.b, color.a, false, true, 2, nil, nil, false)
     end

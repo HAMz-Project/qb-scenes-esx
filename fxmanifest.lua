@@ -25,9 +25,16 @@ server_scripts {
 }
 
 shared_scripts {
-	'@qb-core/shared/locale.lua',
+	'@es_extended/imports.lua',
+	'@es_extended/locale.lua',
+	'@ox_lib/init.lua',
 	'locales/en.lua',
 	'/shared/config.lua',
 }
 
 lua54 'yes'
+
+dependencies {
+	'es_extended',
+	'ox_lib',
+}

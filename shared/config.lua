@@ -1,5 +1,6 @@
 Config = {}
 
+Config.Locale = 'en'
 Config.AdminOnly = false -- Only Admins will be able to use this NUI
 Config.CreateSceneKey = 'K' -- https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard/
 Config.DeleteSceneKey = 'DELETE' -- https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard/
